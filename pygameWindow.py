@@ -1,15 +1,22 @@
 import pygame
+import constants
 
-pygame.init()
+white = (255, 255, 255)
 
 
 class PYGAME_WINDOW:
-    def __init(self):
-        self.screen = pygame.display.set_mode((300, 100))
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((constants.pygameWindowWidth, constants.pygameWindowDepth))
 
     def Prepare(self):
         pygame.event.get()
-        self.screen.fill(...)
+        self.screen.fill((255, 255, 255))
+        pass
 
     def Reveal(self):
+        pygame.display.update()
         pass
+
+    def Draw_Black_Circle(self, x, y):
+        pygame.draw.circle(self.screen, (0, 0, 0), (x, y), 20, 20)
