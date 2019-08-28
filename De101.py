@@ -1,5 +1,5 @@
 import sys
-sys.path.append('.../LeapSDK/lib/x64')
+sys.path.append('../x64')
 sys.path.insert(0, '..')
 import Leap
 # from pygameWindow import PYGAME_WINDOW
