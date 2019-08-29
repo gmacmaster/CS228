@@ -1,31 +1,76 @@
 import sys
+
 sys.path.append('../x64')
 sys.path.insert(0, '..')
 import Leap
-# from pygameWindow import PYGAME_WINDOW
-# import random
-# import constants
-#
-# pygameWindow = PYGAME_WINDOW()
-#
-# X = 350
-# Y = 350
-#
-#
-# def Perturb_Circle_Position():
-#     global X, Y
-#     fourSidedDieRoll = random.randint(1, 4)
-#     if fourSidedDieRoll == 1:
-#         X = X - constants.circleVelocity
-#     elif fourSidedDieRoll == 2:
-#         X = X + constants.circleVelocity
-#     elif fourSidedDieRoll == 3:
-#         Y = Y - constants.circleVelocity
-#     else:
-#         Y = Y + constants.circleVelocity
-#
-# while True:
-#     Perturb_Circle_Position()
-#     pygameWindow.Prepare()
-#     pygameWindow.Draw_Black_Circle(X, Y)
-#     pygameWindow.Reveal()
+from pygameWindow import PYGAME_WINDOW
+import random
+import constants
+
+controller = Leap.Controller()
+
+pygameWindow = PYGAME_WINDOW()
+
+x = 350
+y = 350
+
+xMin = 1000.0
+xMax = -1000.0
+yMin = 1000.0
+yMax = -1000.0
+
+
+def Perturb_Circle_Position():
+    global x, y
+    fourSidedDieRoll = random.randint(1, 4)
+    if fourSidedDieRoll == 1:
+        x = x - constants.circleVelocity
+    elif fourSidedDieRoll == 2:
+        x = x + constants.circleVelocity
+    elif fourSidedDieRoll == 3:
+        y = y - constants.circleVelocity
+    else:
+        y = y + constants.circleVelocity
+
+
+def Scale(num, l1, h1, l2, h2):
+    scaledNum = num
+    rangeOne = h1 - l1
+    rangeTwo = h2 - l2
+    if rangeOne == 0:
+        return scaledNum
+    else:
+        scaledNum = (((num - l1) * rangeTwo) / rangeOne) + l2
+        return int(scaledNum)
+
+
+def Handle_Frame(frame):
+    global x, y, xMax, xMin, yMax, yMin
+    hand = frame.hands[0]
+    fingers = hand.fingers
+    indexFingerList = fingers.finger_type(1)
+    indexFinger = indexFingerList[0]
+    distalPhalanx = indexFinger.bone(3)
+    tip = distalPhalanx.next_joint
+    x = int(tip[0])
+    y = int(tip[1])
+    y = constants.pygameWindowDepth - y
+    if (x < xMin):
+        xMin = x
+    if (x > xMax):
+        xMax = x
+    if (y < yMin):
+        yMin = y
+    if (y > yMax):
+        yMax = y
+
+
+while True:
+    frame = controller.frame()
+    if len(frame.hands) > 0:
+        Handle_Frame(frame)
+    pygameX = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
+    pygameY = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
+    pygameWindow.Prepare()
+    pygameWindow.Draw_Black_Circle(pygameX, pygameY)
+    pygameWindow.Reveal()
