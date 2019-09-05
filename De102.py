@@ -44,17 +44,14 @@ def Scale(num, l1, h1, l2, h2):
         return int(scaledNum)
 
 
-def Handle_Frame(frame):
-    global x, y, xMax, xMin, yMax, yMin
-    hand = frame.hands[0]
-    fingers = hand.fingers
-    indexFingerList = fingers.finger_type(1)
-    indexFinger = indexFingerList[0]
-    distalPhalanx = indexFinger.bone(3)
-    tip = distalPhalanx.next_joint
-    x = int(tip[0])
-    y = int(tip[1])
-    y = constants.pygameWindowDepth - y
+def Draw_Black_Line(xBase, yBase, xTip, yTip):
+    print(xBase, yBase, xTip, yTip)
+
+
+def Handle_Vector_From_Leap(v):
+    global xMax, xMin, yMax, yMin
+    x = v[0]
+    y = v[2]
     if (x < xMin):
         xMin = x
     if (x > xMax):
@@ -63,14 +60,53 @@ def Handle_Frame(frame):
         yMin = y
     if (y > yMax):
         yMax = y
+    x = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
+    y = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
+    return x, y
+
+
+def Handle_Bone(bone, width):
+    base = Handle_Vector_From_Leap(bone.prev_joint)
+    tip = Handle_Vector_From_Leap(bone.next_joint)
+    pygameWindow.Draw_Black_Line(base, tip, 1)
+
+
+def Handle_Finger(finger):
+    for b in range(4):
+        bone = finger.bone(b)
+        Handle_Bone(bone, (4-b))
+
+
+def Handle_Frame(frame):
+    global x, y, xMax, xMin, yMax, yMin
+    hand = frame.hands[0]
+    fingers = hand.fingers
+    for finger in fingers:
+        Handle_Finger(finger)
+    # indexFingerList = fingers.finger_type(1)
+    # indexFinger = indexFingerList[0]
+    # distalPhalanx = indexFinger.bone(3)
+    # tip = distalPhalanx.next_joint
+    # x = int(tip[0])
+    # y = int(tip[1])
+    # y = constants.pygameWindowDepth - y
+    # if (x < xMin):
+    #     xMin = x
+    # if (x > xMax):
+    #     xMax = x
+    # if (y < yMin):
+    #     yMin = y
+    # if (y > yMax):
+    #     yMax = y
+    pass
 
 
 while True:
     frame = controller.frame()
+    pygameWindow.Prepare()
     if len(frame.hands) > 0:
         Handle_Frame(frame)
     pygameX = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
     pygameY = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
-    pygameWindow.Prepare()
-    pygameWindow.Draw_Black_Circle(pygameX, pygameY)
+    # pygameWindow.Draw_Black_Circle(pygameX, pygameY)
     pygameWindow.Reveal()
