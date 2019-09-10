@@ -25,9 +25,11 @@ class DELIVERABLE:
         self.previousNumberOfHands = 0
         self.currentNumberOfHands = 0
         self.gestureData = np.zeros((5, 4, 6), dtype='f')
+        self.numGestures = 0
 
     def Save_Gesture(self):
-        pickle_out = open("./userData/gesture.p", "wb")
+        pickle_out = open("./userData/gesture"+str(self.numGestures)+".p", "wb")
+        self.numGestures = self.numGestures + 1
         pickle.dump(self.gestureData, pickle_out)
         pickle_out.close()
 
