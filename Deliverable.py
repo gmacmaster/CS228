@@ -3,6 +3,8 @@ import random
 import constants
 import numpy as np
 import pickle
+import os
+import shutil
 
 sys.path.append('../x64')
 sys.path.insert(0, '..')
@@ -26,6 +28,8 @@ class DELIVERABLE:
         self.currentNumberOfHands = 0
         self.gestureData = np.zeros((5, 4, 6), dtype='f')
         self.numGestures = 0
+        shutil.rmtree('./userData')
+        os.mkdir('./userData')
 
     def Save_Gesture(self):
         pickle_out = open("./userData/gesture"+str(self.numGestures)+".p", "wb")
@@ -104,8 +108,6 @@ class DELIVERABLE:
         for finger in fingers:
             self.Handle_Finger(finger)
         if self.Recording_Is_Ending():
-            #print(self.gestureData[0,3,3:6])
-            print(self.gestureData)
             self.Save_Gesture()
         # indexFingerList = fingers.finger_type(1)
         # indexFinger = indexFingerList[0]
