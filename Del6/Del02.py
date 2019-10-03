@@ -87,11 +87,11 @@ def Handle_Bone(bone, width, b):
     global k, testData
     base = Handle_Vector_From_Leap(bone.prev_joint)
     tip = Handle_Vector_From_Leap(bone.next_joint)
-    pygameWindow.Draw_Black_Line(base, tip, 1)
+    pygameWindow.Draw_Black_Line(base, tip, (4-b))
     if (b == 0) or (b == 3):
         testData[0, k] = bone.next_joint[0]
         testData[0, k + 1] = bone.next_joint[1]
-        testData[0, k + 2] = bone.next_joint[2]
+        testData[0, k + 2] = bone.next_joint[2] *-1
         k = k + 3
     testData = CenterData(testData)
     predictedClass = clf.Predict(testData)
@@ -110,22 +110,6 @@ def Handle_Frame(frame):
     fingers = hand.fingers
     for finger in fingers:
         Handle_Finger(finger)
-    # indexFingerList = fingers.finger_type(1)
-    # indexFinger = indexFingerList[0]
-    # distalPhalanx = indexFinger.bone(3)
-    # tip = distalPhalanx.next_joint
-    # x = int(tip[0])
-    # y = int(tip[1])
-    # y = constants.pygameWindowDepth - y
-    # if (x < xMin):
-    #     xMin = x
-    # if (x > xMax):
-    #     xMax = x
-    # if (y < yMin):
-    #     yMin = y
-    # if (y > yMax):
-    #     yMax = y
-    pass
 
 
 while True:
