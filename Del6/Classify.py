@@ -121,7 +121,6 @@ testData = ReshapeDataSets(
      train8_1, test8, train9_1, test9, test0, test01],
     [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 0, 0])
 testX = testData[0]
-print(testX.shape)
 testy = testData[1]
 knn.Fit(trainX, trainy)
 

@@ -13,7 +13,7 @@ controller = Leap.Controller()
 
 pygameWindow = PYGAME_WINDOW()
 
-clf = pickle.load(open('userData/classifier.p', 'rb'))
+clf = pickle.load(open('userData/classifier2.p', 'rb'))
 testData = np.zeros((1, 30), dtype='f')
 k = 0
 x = 350
@@ -87,15 +87,12 @@ def Handle_Bone(bone, width, b):
     global k, testData
     base = Handle_Vector_From_Leap(bone.prev_joint)
     tip = Handle_Vector_From_Leap(bone.next_joint)
-    pygameWindow.Draw_Black_Line(base, tip, (4-b))
+    pygameWindow.Draw_Black_Line(base, tip, width)
     if (b == 0) or (b == 3):
         testData[0, k] = bone.next_joint[0]
         testData[0, k + 1] = bone.next_joint[1]
-        testData[0, k + 2] = bone.next_joint[2] *-1
+        testData[0, k + 2] = bone.next_joint[2]
         k = k + 3
-    testData = CenterData(testData)
-    predictedClass = clf.Predict(testData)
-    print(predictedClass)
 
 
 def Handle_Finger(finger):
@@ -119,6 +116,9 @@ while True:
     if len(frame.hands) > 0:
         k = 0
         Handle_Frame(frame)
+        testData = CenterData(testData)
+        predictedClass = clf.Predict(testData)
+        print(predictedClass)
     pygameX = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
     pygameY = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
     # pygameWindow.Draw_Black_Circle(pygameX, pygameY)
