@@ -24,15 +24,17 @@ class DELIVERABLE:
         self.xMax = -1000.0
         self.yMin = 1000.0
         self.yMax = -1000.0
+        self.numberOfGestures = 1000
+        self.gestureIndex = 0
         self.previousNumberOfHands = 0
         self.currentNumberOfHands = 0
-        self.gestureData = np.zeros((5, 4, 6), dtype='f')
+        self.gestureData = np.zeros((5, 4, 6, self.numberOfGestures), dtype='f')
         self.numGestures = 0
         shutil.rmtree('./userData')
         os.mkdir('./userData')
 
     def Save_Gesture(self):
-        pickle_out = open("./userData/gesture"+str(self.numGestures)+".p", "wb")
+        pickle_out = open("./userData/gesture" + str(self.numGestures) + ".p", "wb")
         self.numGestures = self.numGestures + 1
         pickle.dump(self.gestureData, pickle_out)
         pickle_out.close()
@@ -89,13 +91,13 @@ class DELIVERABLE:
         else:
             color = (0, 255, 0)
         pygameWindow.Draw_Line(base, tip, (4 - b), color)
-        if self.Recording_Is_Ending():
-            self.gestureData[fingerType, b, 0] = bone.prev_joint[0]
-            self.gestureData[fingerType, b, 1] = bone.prev_joint[1]
-            self.gestureData[fingerType, b, 2] = bone.prev_joint[2]
-            self.gestureData[fingerType, b, 3] = bone.next_joint[0]
-            self.gestureData[fingerType, b, 4] = bone.next_joint[1]
-            self.gestureData[fingerType, b, 5] = bone.next_joint[2]
+        if self.currentNumberOfHands == 2:
+            self.gestureData[fingerType, b, 0, self.gestureIndex] = bone.prev_joint[0]
+            self.gestureData[fingerType, b, 1, self.gestureIndex] = bone.prev_joint[1]
+            self.gestureData[fingerType, b, 2, self.gestureIndex] = bone.prev_joint[2]
+            self.gestureData[fingerType, b, 3, self.gestureIndex] = bone.next_joint[0]
+            self.gestureData[fingerType, b, 4, self.gestureIndex] = bone.next_joint[1]
+            self.gestureData[fingerType, b, 5, self.gestureIndex] = bone.next_joint[2]
 
     def Handle_Finger(self, finger):
         for b in range(4):
@@ -107,8 +109,12 @@ class DELIVERABLE:
         fingers = hand.fingers
         for finger in fingers:
             self.Handle_Finger(finger)
-        if self.Recording_Is_Ending():
-            self.Save_Gesture()
+        if self.currentNumberOfHands == 2:
+            print('gesture ' + str(self.gestureIndex) + ' stored.')
+            self.gestureIndex = self.gestureIndex + 1
+            if self.gestureIndex == self.numberOfGestures:
+                self.Save_Gesture()
+                exit(0)
         # indexFingerList = fingers.finger_type(1)
         # indexFinger = indexFingerList[0]
         # distalPhalanx = indexFinger.bone(3)
