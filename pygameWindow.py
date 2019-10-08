@@ -23,3 +23,12 @@ class PYGAME_WINDOW:
 
     def Draw_Black_Line(self, start_pos, end_pos, width):
         pygame.draw.line(self.screen, (0, 0, 0), start_pos, end_pos, width)
+
+    def Draw_Line(self, start_pos, end_pos, width, color):
+        pygame.draw.line(self.screen, color, start_pos, end_pos, width)
+
+    def Load_Image(self, path, x, y, resize):
+        image = pygame.image.load(path)
+        if resize:
+            image = pygame.transform.scale(image, (constants.pygameWindowWidth/2, constants.pygameWindowDepth/2))
+        self.screen.blit(image, (x, y))
