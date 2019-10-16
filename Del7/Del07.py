@@ -14,7 +14,7 @@ controller = Leap.Controller()
 
 pygameWindow = PYGAME_WINDOW()
 
-clf = pickle.load(open('../Del6/userData/classifier2.p', 'rb'))
+clf = pickle.load(open('../Del6/userData/classifier.p', 'rb'))
 testData = np.zeros((1, 30), dtype='f')
 k = 0
 x = 350
@@ -138,23 +138,31 @@ def Handle_Palm_Position(palm):
         direction = 'down'
         moveNeeded = True
     if palm[2] < topMost:
-        direction = 'back'
+        direction = 'forward'
         moveNeeded = True
     elif palm[2] > bottomMost:
-        direction = 'forward'
+        direction = 'back'
         moveNeeded = True
     if (not moveNeeded):
         centeredTimes = centeredTimes + 1
-        pygameWindow.Load_Image('good.jpg', constants.pygameWindowWidth / 2, 0, True)
         if centeredTimes >= minCenteredTimes:
-            pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, 0),
-                                   (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 2, (0, 255, 0))
-            pygameWindow.Draw_Line((0, constants.pygameWindowDepth / 2),
-                                   (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 2, (0, 255, 0))
+            pygameWindow.Load_Image('good.jpg', constants.pygameWindowWidth / 2, 0, True)
             programState = 2
+        else:
+            pygameWindow.Load_Image('wave.png', constants.pygameWindowWidth / 2, 0, True)
+            if centeredTimes % 2 == 0:
+                pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, 0),
+                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4,
+                                       (0, 255, 0))
+                pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2),
+                                       (constants.pygameWindowWidth, constants.pygameWindowDepth / 2), 4, (0, 255, 0))
     else:
         # print(direction)
         pygameWindow.Load_Image(direction + '.png', constants.pygameWindowWidth / 2, 0, True)
+        pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, 0),
+                               (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 3, (255, 0, 0))
+        pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2),
+                               (constants.pygameWindowWidth, constants.pygameWindowDepth / 2), 3, (255, 0, 0))
         programState = 1
         centeredTimes = 0
 
@@ -204,14 +212,21 @@ while True:
         if len(frame.hands) == 0:
             programState = 0
     elif programState == 2:
-        print('Sign: ' + str(signToShow))
+        pygameWindow.Load_Image(str(signToShow) + '.jpg', constants.pygameWindowWidth / 2,
+                                constants.pygameWindowDepth / 2, True)
         k = 0
         Handle_Frame(frame)
         testData = CenterData(testData)
         predictedClass = clf.Predict(testData)
         print('predictedClass: ' + str(predictedClass))
+        print('sign: ' + str(signToShow))
+        print('***')
         if predictedClass == signToShow:
             numCorrectSigns = numCorrectSigns + 1
+            pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, 0),
+                                   (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4, (0, 255, 0))
+            pygameWindow.Draw_Line((0, constants.pygameWindowDepth / 2),
+                                   (constants.pygameWindowWidth/2, constants.pygameWindowDepth / 2), 4, (0, 255, 0))
         if numCorrectSigns >= 150:
             programState = 3
             pygameWindow.Load_Image('done.png', constants.pygameWindowWidth / 2, 0, True)

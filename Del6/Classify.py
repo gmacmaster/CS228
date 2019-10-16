@@ -68,24 +68,24 @@ def ReduceAndCenter(data):
     return CenterData(ReduceData(data))
 
 
-test1 = ReduceAndCenter(pickle.load(open("./userData/Giroux_test1.p", "rb")))
-train1 = ReduceAndCenter(pickle.load(open("./userData/Giroux_train1.p", "rb")))
+test1 = ReduceAndCenter(pickle.load(open("./userData/Lin_test1.p", "rb")))
+train1 = ReduceAndCenter(pickle.load(open("./userData/Lin_train1.p", "rb")))
 test1_1 = ReduceAndCenter(pickle.load(open("./userData/Newton_test1.p", "rb")))
 train1_1 = ReduceAndCenter(pickle.load(open("./userData/Newton_train1.p", "rb")))
-test2 = ReduceAndCenter(pickle.load(open("./userData/Giroux_test2.p", "rb")))
-train2 = ReduceAndCenter(pickle.load(open("./userData/Giroux_train2.p", "rb")))
-test2_1 = ReduceAndCenter(pickle.load(open("./userData/Gordon_test2.p", "rb")))
-train2_1 = ReduceAndCenter(pickle.load(open("./userData/Gordon_train2.p", "rb")))
-train3 = ReduceAndCenter(pickle.load(open("./userData/Ward_train3.p", "rb")))
-test3 = ReduceAndCenter(pickle.load(open("./userData/Ward_test3.p", "rb")))
-train3_1 = ReduceAndCenter(pickle.load(open("./userData/Apple_train3.p", "rb")))
-test3_1 = ReduceAndCenter(pickle.load(open("./userData/Apple_test3.p", "rb")))
-train4 = ReduceAndCenter(pickle.load(open("./userData/Ward_train4.p", "rb")))
-test4 = ReduceAndCenter(pickle.load(open("./userData/Ward_test4.p", "rb")))
+test2 = ReduceAndCenter(pickle.load(open("./userData/Liu_test2.p", "rb")))
+train2 = ReduceAndCenter(pickle.load(open("./userData/Liu_train2.p", "rb")))
+test2_1 = ReduceAndCenter(pickle.load(open("./userData/Apple_test2.p", "rb")))
+train2_1 = ReduceAndCenter(pickle.load(open("./userData/Apple_train2.p", "rb")))
+train3 = ReduceAndCenter(pickle.load(open("./userData/Liu_train3.p", "rb")))
+test3 = ReduceAndCenter(pickle.load(open("./userData/Liu_test3.p", "rb")))
+train3_1 = ReduceAndCenter(pickle.load(open("./userData/train3_1.p", "rb")))
+test3_1 = ReduceAndCenter(pickle.load(open("./userData/test3_1.p", "rb")))
+train4 = ReduceAndCenter(pickle.load(open("./userData/Ortigara_train4.p", "rb")))
+test4 = ReduceAndCenter(pickle.load(open("./userData/Ortigara_test4.p", "rb")))
 train4_1 = ReduceAndCenter(pickle.load(open("./userData/Deluca_train4.p", "rb")))
 test4_1 = ReduceAndCenter(pickle.load(open("./userData/Deluca_test4.p", "rb")))
-train5 = ReduceAndCenter(pickle.load(open("./userData/Peck_train5.p", "rb")))
-test5 = ReduceAndCenter(pickle.load(open("./userData/Peck_test5.p", "rb")))
+train5 = ReduceAndCenter(pickle.load(open("./userData/Ortigara_train5.p", "rb")))
+test5 = ReduceAndCenter(pickle.load(open("./userData/Ortigara_test5.p", "rb")))
 train5_1 = ReduceAndCenter(pickle.load(open("./userData/Warren_train5.p", "rb")))
 test5_1 = ReduceAndCenter(pickle.load(open("./userData/Warren_test5.p", "rb")))
 test6 = ReduceAndCenter(pickle.load(open("./userData/test6.p", "rb")))
@@ -96,37 +96,35 @@ test7 = ReduceAndCenter(pickle.load(open("./userData/test7.p", "rb")))
 train7 = ReduceAndCenter(pickle.load(open("./userData/train7.p", "rb")))
 test7_1 = ReduceAndCenter(pickle.load(open("./userData/Rubin_test7.p", "rb")))
 train7_1 = ReduceAndCenter(pickle.load(open("./userData/Rubin_train7.p", "rb")))
-test8 = ReduceAndCenter(pickle.load(open("./userData/Rubin_test8.p", "rb")))
-train8 = ReduceAndCenter(pickle.load(open("./userData/Rubin_train8.p", "rb")))
-test8_1 = ReduceAndCenter(pickle.load(open("./userData/Saulean_test8.p", "rb")))
-train8_1 = ReduceAndCenter(pickle.load(open("./userData/Saulean_train8.p", "rb")))
+test8 = ReduceAndCenter(pickle.load(open("./userData/Rubin_test8.p", "rb"))) #Lefty
+train8 = ReduceAndCenter(pickle.load(open("./userData/Rubin_train8.p", "rb"))) #Lefty
+test8_1 = ReduceAndCenter(pickle.load(open("./userData/Erickson_test8.p", "rb")))
+train8_1 = ReduceAndCenter(pickle.load(open("./userData/Erickson_train8.p", "rb")))
 test9 = ReduceAndCenter(pickle.load(open("./userData/Saulean_test9.p", "rb")))
 train9 = ReduceAndCenter(pickle.load(open("./userData/Saulean_train9.p", "rb")))
 test9_1 = ReduceAndCenter(pickle.load(open("./userData/Zonay_test9.p", "rb")))
 train9_1 = ReduceAndCenter(pickle.load(open("./userData/Zonay_train9.p", "rb")))
-test0 = ReduceAndCenter(pickle.load(open("./userData/Genovese_test0.p", "rb")))
-train0 = ReduceAndCenter(pickle.load(open("./userData/Genovese_train0.p", "rb")))
+test0 = ReduceAndCenter(pickle.load(open("./userData/Lin_test0.p", "rb")))
+train0 = ReduceAndCenter(pickle.load(open("./userData/Lin_train0.p", "rb")))
 test01 = ReduceAndCenter(pickle.load(open("./userData/Childs_test0.p", "rb")))
 train01 = ReduceAndCenter(pickle.load(open("./userData/Childs_train0.p", "rb")))
 
 # trainData = ReshapeData(train6, train7, train1)
 trainData = ReshapeDataSets(
-    [train1, train1_1, train2_1, train2, train3_1, train3, train4_1, train4, train5_1, train5, train6_1, train6,
-     train7_1, train7, train8_1, train8, train9_1, train9, train0, test01],
-    [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 0, 0])
+    [train1_1, train2_1, train3_1, train4, train5, train6, train7, train8_1, train9, train01],
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
 trainX = trainData[0]
 trainy = trainData[1]
 testData = ReshapeDataSets(
-    [test1, test1_1, test2_1, test2, train3_1, test3, test4_1, test4, test5_1, test5, train6_1, test6, train7_1, test7,
-     train8_1, test8, train9_1, test9, test0, test01],
-    [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 0, 0])
+    [test1_1, test2_1, test3_1, train4, test5, test6, test7, test8_1, test9, test01],
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
 testX = testData[0]
 testy = testData[1]
 knn.Fit(trainX, trainy)
 
 numCorrect = 0
 total = 0
-for row in range(0, 20000):
+for row in range(0, len(testData[0])):
     total = total + 1
     prediction = int(knn.Predict(testX[row]))
     actualValue = testy[row]

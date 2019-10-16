@@ -13,7 +13,7 @@ controller = Leap.Controller()
 
 pygameWindow = PYGAME_WINDOW()
 
-clf = pickle.load(open('userData/classifier2.p', 'rb'))
+clf = pickle.load(open('userData/classifier.p', 'rb'))
 testData = np.zeros((1, 30), dtype='f')
 k = 0
 x = 350

@@ -30,11 +30,11 @@ class DELIVERABLE:
         self.currentNumberOfHands = 0
         self.gestureData = np.zeros((5, 4, 6, self.numberOfGestures), dtype='f')
         self.numGestures = 0
-        shutil.rmtree('./userDirections')
-        os.mkdir('./userDirections')
+        shutil.rmtree('./userData')
+        os.mkdir('./userData')
 
     def Save_Gesture(self):
-        pickle_out = open("./userDirections/directions" + str(self.numGestures) + ".p", "wb")
+        pickle_out = open("./userData/gesture" + str(self.numGestures) + ".p", "wb")
         self.numGestures = self.numGestures + 1
         pickle.dump(self.gestureData, pickle_out)
         pickle_out.close()
