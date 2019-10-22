@@ -7,6 +7,9 @@ white = (255, 255, 255)
 class PYGAME_WINDOW:
     def __init__(self):
         pygame.init()
+        pygame.font.init()
+        self.headerFont = pygame.font.SysFont('timesnewroman', 18)
+        self.textFont = pygame.font.SysFont('timesnewroman', 16)
         self.screen = pygame.display.set_mode((constants.pygameWindowWidth, constants.pygameWindowDepth))
 
     def Prepare(self):
@@ -32,3 +35,16 @@ class PYGAME_WINDOW:
         if resize:
             image = pygame.transform.scale(image, (constants.pygameWindowWidth/2, constants.pygameWindowDepth/2))
         self.screen.blit(image, (x, y))
+
+    def Display_Tries(self, userdata):
+        self.screen.blit(self.headerFont.render('Sign: Attempts', False, (0, 0, 0)), (10, constants.pygameWindowDepth / 2))
+        self.screen.blit(self.textFont.render('0: ' + str(userdata['0attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 20))
+        self.screen.blit(self.textFont.render('1: ' + str(userdata['1attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 35))
+        self.screen.blit(self.textFont.render('2: ' + str(userdata['2attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 50))
+        self.screen.blit(self.textFont.render('3: ' + str(userdata['3attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 65))
+        self.screen.blit(self.textFont.render('4: ' + str(userdata['4attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 80))
+        self.screen.blit(self.textFont.render('5: ' + str(userdata['5attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 95))
+        self.screen.blit(self.textFont.render('6: ' + str(userdata['6attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 110))
+        self.screen.blit(self.textFont.render('7: ' + str(userdata['7attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 125))
+        self.screen.blit(self.textFont.render('8: ' + str(userdata['8attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 140))
+        self.screen.blit(self.textFont.render('9: ' + str(userdata['9attempted']), False, (0, 20, 0)), (10, constants.pygameWindowDepth / 2 + 155))
