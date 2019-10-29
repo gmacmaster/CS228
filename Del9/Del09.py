@@ -52,7 +52,10 @@ centeredTimes = 0
 minCenteredTimes = 500
 centeringComplete = False
 numCorrectSigns = 0
-signToShow = random.randint(0, 9)
+currentSignAttempts = 0
+maxSignAttempts = 500
+signToShow = 1
+
 
 def CenterData(X):
     allXCoordinates = X[0, ::3]
@@ -215,9 +218,24 @@ def DispalyDirections():
                 yTipScaled = Scale(yTipNotYetScaled, yMin, yMax, 0, constants.pygameWindowDepth)
                 pygameWindow.Draw_Black_Line((xBaseScaled, yBaseScaled), (xTipScaled, yTipScaled), 2)
 
+def GetNextSign():
+    global userRecord
+    least = userRecord['1attempted']
+    sign = 1
+    leastSuccessful = [1]
+    for r in userRecord:
+        if r.find('attempted') != -1:
+            if userRecord[r] < least:
+                least = userRecord[r]
+                leastSuccessful = [int(r[0])]
+            elif userRecord[r] == least:
+                leastSuccessful.append(int(r[0]))
+    return leastSuccessful[random.randint(0, len(leastSuccessful)-1)]
 
+
+signToShow = GetNextSign()
 while True:
-    global k, programState, numCorrectSigns, signToShow, userRecord, database
+    global k, programState, numCorrectSigns, currentSignAttempts, signToShow, userRecord, database, maxSignAttempts
     frame = controller.frame()
     pygameWindow.Prepare()
     if programState == 0:
@@ -233,9 +251,19 @@ while True:
         if len(frame.hands) == 0:
             programState = 0
     elif programState == 2:
+        pygameWindow.Display_Time_Left((maxSignAttempts-currentSignAttempts)/100 + 1)
+        if int(userRecord[str(signToShow) + 'attempted']) < 3:
+            maxSignAttempts = 500
+            pygameWindow.Display_Current_Sign(signToShow)
+        elif int(userRecord[str(signToShow) + 'attempted']) < 5:
+            maxSignAttempts = 349
+        if int(userRecord[str(signToShow) + 'attempted']) >= 5:
+            maxSignAttempts = 250
+            pygameWindow.Display_Current_Sign_Large(signToShow)
+        else:
+            pygameWindow.Load_Image(str(signToShow) + '.jpg', constants.pygameWindowWidth / 2,
+                                    constants.pygameWindowDepth / 2, True)
         pygameWindow.Display_Tries(userRecord)
-        pygameWindow.Load_Image(str(signToShow) + '.jpg', constants.pygameWindowWidth / 2,
-                                constants.pygameWindowDepth / 2, True)
         k = 0
         Handle_Frame(frame)
         testData = CenterData(testData)
@@ -243,6 +271,10 @@ while True:
         print('predictedClass: ' + str(predictedClass))
         print('sign: ' + str(signToShow))
         print('***')
+        currentSignAttempts = currentSignAttempts + 1
+        if currentSignAttempts >= maxSignAttempts:
+            programState = 4
+            pygameWindow.Load_Image('bad.png', constants.pygameWindowWidth / 2, 0, True)
         if predictedClass == signToShow:
             numCorrectSigns = numCorrectSigns + 1
             pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, 0),
@@ -260,10 +292,18 @@ while True:
         time.sleep(2)
         programState = 1
         numCorrectSigns = 0
+        currentSignAttempts = 0
         userRecord[str(signToShow) + 'attempted'] = userRecord[str(signToShow) + 'attempted'] + 1
-        signToShow = random.randint(0, 9)
+        signToShow = GetNextSign()
         print(userRecord)
         pickle.dump(database, open('userData/database.p', 'wb'))
+    elif programState == 4:
+        print('Failure')
+        numCorrectSigns = 0
+        currentSignAttempts = 0
+        time.sleep(2)
+        signToShow = GetNextSign()
+        programState = 1
     if not programState == 0:
         pygameWindow.Draw_Black_Line((constants.pygameWindowWidth / 2, 0),
                                      (constants.pygameWindowWidth / 2, constants.pygameWindowDepth), 2)
