@@ -201,6 +201,30 @@ def Handle_Frame(frame):
     for finger in fingers:
         Handle_Finger(finger)
 
+def Handle_Frame_Circle(frame):
+    # May have to switch xMax, yMax etc variable to other name
+    global x, y, xMax, xMin, yMax, yMin
+    hand = frame.hands[0]
+    palm = hand.palm_position
+    fingers = hand.fingers
+    indexFingerList = fingers.finger_type(1)
+    indexFinger = indexFingerList[0]
+    distalPhalanx = indexFinger.bone(3)
+    tip = distalPhalanx.next_joint
+    print tip
+    print palm
+    x = int(palm[0])
+    y = int(palm[1])
+    y = constants.pygameWindowDepth - y
+    if (x < xMin):
+        xMin = x
+    if (x > xMax):
+        xMax = x
+    if (y < yMin):
+        yMin = y
+    if (y > yMax):
+        yMax = y
+
 
 def DispalyDirections():
     global x, y, xMax, xMin, yMax, yMin
@@ -245,6 +269,11 @@ while True:
         if len(frame.hands) > 0:
             programMode = 1
     elif programMode == 1:
+        pygameWindow.Load_Image('wave.png', 100, 100, False)
+        Handle_Frame_Circle(frame)
+        pygameX = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
+        pygameY = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
+        pygameWindow.Draw_Black_Circle(pygameX, pygameY)
         if len(frame.hands) == 0:
             programMode = 0
     elif programMode == 2:
