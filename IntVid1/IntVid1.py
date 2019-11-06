@@ -57,6 +57,7 @@ numCorrectSigns = 0
 currentSignAttempts = 0
 maxSignAttempts = 500
 signToShow = 1
+circleThickness = 2
 
 
 def CenterData(X):
@@ -201,18 +202,12 @@ def Handle_Frame(frame):
     for finger in fingers:
         Handle_Finger(finger)
 
+
 def Handle_Frame_Circle(frame):
     # May have to switch xMax, yMax etc variable to other name
-    global x, y, xMax, xMin, yMax, yMin
+    global x, y, xMax, xMin, yMax, yMin, circleThickness
     hand = frame.hands[0]
     palm = hand.palm_position
-    fingers = hand.fingers
-    indexFingerList = fingers.finger_type(1)
-    indexFinger = indexFingerList[0]
-    distalPhalanx = indexFinger.bone(3)
-    tip = distalPhalanx.next_joint
-    print tip
-    print palm
     x = int(palm[0])
     y = int(palm[1])
     y = constants.pygameWindowDepth - y
@@ -224,6 +219,39 @@ def Handle_Frame_Circle(frame):
         yMin = y
     if (y > yMax):
         yMax = y
+
+def HandleCircleThickness_Home(x, y):
+    global circleThickness, programState, programMode
+    if 100 < x < 300 and 200 < y < 400:
+        if circleThickness < 20:
+            circleThickness = circleThickness + .4
+        else:
+            programState = 1
+            programMode = 2
+    elif 400 < x < 600 and 200 < y < 400:
+        if circleThickness < 20:
+            circleThickness = circleThickness + .4
+        else:
+            programState = 1
+            programMode = 3
+    elif 300 < x < 400 and 600 < y < 700:
+        if circleThickness < 20:
+            circleThickness = circleThickness + .4
+        else:
+            quit()
+    else:
+        circleThickness = 2
+
+def HandleCircleThickness_Game(x, y):
+    global circleThickness, programState, programMode
+    if 650 < x < 700 and 650 < y < 700:
+        if circleThickness < 20:
+            circleThickness = circleThickness + .2
+        else:
+            programState = 0
+            programMode = 1
+    else:
+        circleThickness = 2
 
 
 def DispalyDirections():
@@ -244,6 +272,7 @@ def DispalyDirections():
                 yTipScaled = Scale(yTipNotYetScaled, yMin, yMax, 0, constants.pygameWindowDepth)
                 pygameWindow.Draw_Black_Line((xBaseScaled, yBaseScaled), (xTipScaled, yTipScaled), 2)
 
+
 def GetNextSign():
     global userRecord
     least = userRecord['1attempted']
@@ -256,12 +285,12 @@ def GetNextSign():
                 leastSuccessful = [int(r[0])]
             elif userRecord[r] == least:
                 leastSuccessful.append(int(r[0]))
-    return leastSuccessful[random.randint(0, len(leastSuccessful)-1)]
+    return leastSuccessful[random.randint(0, len(leastSuccessful) - 1)]
 
 
 signToShow = GetNextSign()
 while True:
-    global k, programState, numCorrectSigns, currentSignAttempts, signToShow, userRecord, database, maxSignAttempts, database, userName, programMode
+    global k, programState, numCorrectSigns, currentSignAttempts, signToShow, userRecord, database, maxSignAttempts, database, userName, programMode, circleThickness
     frame = controller.frame()
     pygameWindow.Prepare()
     if programMode == 0:
@@ -269,11 +298,17 @@ while True:
         if len(frame.hands) > 0:
             programMode = 1
     elif programMode == 1:
-        pygameWindow.Load_Image('wave.png', 100, 100, False)
+        pygameWindow.Load_Image_Sized('learn.png', 100, 200, 200, 200)
+        pygameWindow.Load_Image_Sized('play.png', 400, 200, 200, 200)
+        pygameWindow.Load_Image_Sized('quit.png', 300, 600, 100, 100)
+        pygameWindow.Draw_Sqare(100, 200, 200, (0, 0, 0,))
+        pygameWindow.Draw_Sqare(400, 200, 200, (0, 0, 0,))
+        pygameWindow.Draw_Sqare(300, 600, 100, (0, 0, 0,))
         Handle_Frame_Circle(frame)
         pygameX = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
         pygameY = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
-        pygameWindow.Draw_Black_Circle(pygameX, pygameY)
+        HandleCircleThickness_Home(pygameX, pygameY)
+        pygameWindow.Draw_Black_Circle(pygameX, pygameY, int(circleThickness))
         if len(frame.hands) == 0:
             programMode = 0
     elif programMode == 2:
@@ -290,8 +325,9 @@ while True:
             Handle_Frame(frame)
             if len(frame.hands) == 0:
                 programState = 0
+                programMode = 0
         elif programState == 2:
-            pygameWindow.Display_Time_Left((maxSignAttempts-currentSignAttempts)/100 + 1)
+            pygameWindow.Display_Time_Left((maxSignAttempts - currentSignAttempts) / 100 + 1)
             pygameWindow.Display_Leaders(database, userName)
             if int(userRecord[str(signToShow) + 'attempted']) < 3:
                 maxSignAttempts = 500
@@ -319,19 +355,24 @@ while True:
             if predictedClass == signToShow:
                 numCorrectSigns = numCorrectSigns + 1
                 pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, constants.pygameWindowDepth),
-                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4, (0, 255, 0))
+                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4,
+                                       (0, 255, 0))
                 pygameWindow.Draw_Line((0, constants.pygameWindowDepth / 2),
-                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4, (0, 255, 0))
+                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4,
+                                       (0, 255, 0))
             else:
                 pygameWindow.Draw_Line((constants.pygameWindowWidth / 2, constants.pygameWindowDepth),
-                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4, (255, 0, 0))
+                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4,
+                                       (255, 0, 0))
                 pygameWindow.Draw_Line((0, constants.pygameWindowDepth / 2),
-                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4, (255, 0, 0))
+                                       (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2), 4,
+                                       (255, 0, 0))
             if numCorrectSigns >= 150:
                 programState = 3
                 pygameWindow.Load_Image('done.png', constants.pygameWindowWidth / 2, 0, True)
             if len(frame.hands) == 0:
                 programState = 0
+                programMode = 0
                 numCorrectSigns = 0
         elif programState == 3:
             print('Success')
@@ -359,5 +400,13 @@ while True:
             pygameWindow.Draw_Black_Line((0, constants.pygameWindowDepth / 2),
                                          (constants.pygameWindowWidth, constants.pygameWindowDepth / 2), 2)
     elif programMode == 3:
-        pass
+        Handle_Frame_Circle(frame)
+        pygameWindow.Load_Image_Sized('bak.png', 650, 650, 50, 50)
+        pygameWindow.Draw_Sqare(650, 650, 50, (0, 0, 0,))
+        pygameX = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
+        pygameY = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
+        HandleCircleThickness_Game(pygameX, pygameY)
+        pygameWindow.Draw_Black_Circle(pygameX, pygameY, int(circleThickness))
+        if len(frame.hands) == 0:
+            programMode = 0
     pygameWindow.Reveal()

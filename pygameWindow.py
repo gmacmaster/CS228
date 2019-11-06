@@ -22,8 +22,8 @@ class PYGAME_WINDOW:
         pygame.display.update()
         pass
 
-    def Draw_Black_Circle(self, x, y):
-        pygame.draw.circle(self.screen, (0, 0, 0), (x, y), 20, 20)
+    def Draw_Black_Circle(self, x, y, thickness):
+        pygame.draw.circle(self.screen, (0, 255, 0), (x, y), 20, thickness)
 
     def Draw_Black_Line(self, start_pos, end_pos, width):
         pygame.draw.line(self.screen, (0, 0, 0), start_pos, end_pos, width)
@@ -31,10 +31,18 @@ class PYGAME_WINDOW:
     def Draw_Line(self, start_pos, end_pos, width, color):
         pygame.draw.line(self.screen, color, start_pos, end_pos, width)
 
+    def Draw_Sqare(self, start_pos, end_pos, width, color):
+        pygame.draw.rect(self.screen, color, (start_pos, end_pos, width, width), 2)
+
     def Load_Image(self, path, x, y, resize):
         image = pygame.image.load(path)
         if resize:
             image = pygame.transform.scale(image, (constants.pygameWindowWidth / 2, constants.pygameWindowDepth / 2))
+        self.screen.blit(image, (x, y))
+
+    def Load_Image_Sized(self, path, x, y, width, length):
+        image = pygame.image.load(path)
+        image = pygame.transform.scale(image, (width, length))
         self.screen.blit(image, (x, y))
 
     def Display_Tries(self, userdata):
