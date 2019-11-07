@@ -4,6 +4,7 @@ sys.path.append('../../x64')
 sys.path.insert(0, '../..')
 import Leap
 from pygameWindow import PYGAME_WINDOW
+from rocketGame import RocketGame
 import random
 import constants
 import pickle
@@ -41,6 +42,7 @@ testData = np.zeros((1, 30), dtype='f')
 k = 0
 x = 350
 y = 350
+game = RocketGame(x, y, pygameWindow)
 
 xMin = 1000.0
 xMax = -1000.0
@@ -220,18 +222,21 @@ def Handle_Frame_Circle(frame):
     if (y > yMax):
         yMax = y
 
+
 def HandleCircleThickness_Home(x, y):
     global circleThickness, programState, programMode
     if 100 < x < 300 and 200 < y < 400:
         if circleThickness < 20:
             circleThickness = circleThickness + .4
         else:
+            circleThickness = 2
             programState = 1
             programMode = 2
     elif 400 < x < 600 and 200 < y < 400:
         if circleThickness < 20:
             circleThickness = circleThickness + .4
         else:
+            circleThickness = 2
             programState = 1
             programMode = 3
     elif 300 < x < 400 and 600 < y < 700:
@@ -242,12 +247,39 @@ def HandleCircleThickness_Home(x, y):
     else:
         circleThickness = 2
 
+def HandleCircleThickness_GameOver(x, y):
+    pygameWindow.Draw_Sqare(200, 300, 100, (0, 0, 0,))
+    pygameWindow.Draw_Sqare(400, 300, 100, (0, 0, 0,))
+    global circleThickness, programState, programMode
+    if 200 < x < 300 and 300 < y < 400:
+        if circleThickness < 20:
+            circleThickness = circleThickness + .4
+        else:
+            circleThickness = 2
+            programState = 0
+            programMode = 1
+    elif 400 < x < 500 and 300 < y < 400:
+        if circleThickness < 20:
+            circleThickness = circleThickness + .4
+        else:
+            circleThickness = 2
+            game.reset()
+    elif 300 < x < 400 and 600 < y < 700:
+        if circleThickness < 20:
+            circleThickness = circleThickness + .4
+        else:
+            quit()
+    else:
+        circleThickness = 2
+
+
 def HandleCircleThickness_Game(x, y):
     global circleThickness, programState, programMode
     if 650 < x < 700 and 650 < y < 700:
         if circleThickness < 20:
             circleThickness = circleThickness + .2
         else:
+            circleThickness = 2
             programState = 0
             programMode = 1
     else:
@@ -401,11 +433,22 @@ while True:
                                          (constants.pygameWindowWidth, constants.pygameWindowDepth / 2), 2)
     elif programMode == 3:
         Handle_Frame_Circle(frame)
-        pygameWindow.Load_Image_Sized('bak.png', 650, 650, 50, 50)
-        pygameWindow.Draw_Sqare(650, 650, 50, (0, 0, 0,))
         pygameX = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
         pygameY = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
-        HandleCircleThickness_Game(pygameX, pygameY)
+        if game.getHealth() > 0:
+            game.setPos(pygameX - 20, pygameY - 20)
+            game.play()
+            pygameWindow.Load_Image_Sized('rocket.png', game.rocketX, game.rocketY, 40, 40)
+            HandleCircleThickness_Game(pygameX, pygameY)
+            pygameWindow.Load_Image_Sized('bak.png', 650, 650, 50, 50)
+            pygameWindow.Draw_Sqare(650, 650, 50, (0, 0, 0,))
+        else:
+            pygameWindow.Display_Gamve_Over()
+            pygameWindow.Load_Image_Sized('bak.png', 200, 300, 100, 100)
+            pygameWindow.Load_Image_Sized('restart.png', 400, 300, 100, 100)
+            pygameWindow.Draw_Sqare(200, 300, 100, (0, 0, 0,))
+            pygameWindow.Draw_Sqare(400, 300, 100, (0, 0, 0,))
+            HandleCircleThickness_GameOver(pygameX, pygameY)
         pygameWindow.Draw_Black_Circle(pygameX, pygameY, int(circleThickness))
         if len(frame.hands) == 0:
             programMode = 0

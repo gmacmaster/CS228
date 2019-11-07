@@ -9,7 +9,9 @@ class PYGAME_WINDOW:
         pygame.init()
         pygame.font.init()
         self.signFont = pygame.font.SysFont('timesnewroman', 80)
+        self.gameOverFont = pygame.font.SysFont('timesnewroman', 80)
         self.headerFont = pygame.font.SysFont('timesnewroman', 18)
+        self.asteroidFont = pygame.font.SysFont('timesnewroman', 30, True, False)
         self.textFont = pygame.font.SysFont('timesnewroman', 16)
         self.screen = pygame.display.set_mode((constants.pygameWindowWidth, constants.pygameWindowDepth))
 
@@ -45,6 +47,13 @@ class PYGAME_WINDOW:
         image = pygame.transform.scale(image, (width, length))
         self.screen.blit(image, (x, y))
 
+    def Display_Asteroid(self, path, x, y, width, length, sign):
+        image = pygame.image.load(path)
+        image = pygame.transform.scale(image, (width, length))
+        self.screen.blit(image, (x, y))
+        self.screen.blit(self.asteroidFont.render(str(sign), False, (255, 0, 0)),
+                         (x+15, y+10))
+
     def Display_Tries(self, userdata):
         numCorrect = 0
         for data in userdata:
@@ -73,8 +82,10 @@ class PYGAME_WINDOW:
         self.screen.blit(self.textFont.render('9: ' + str(userdata['9attempted']), False, (0, 20, 0)),
                          (10, constants.pygameWindowDepth / 2 + 155))
         if userdata['numTries'] != 0:
-            self.screen.blit(self.textFont.render('Correct: ' + str((numCorrect/(userdata['numTries']*1.0))*100.0) + '%', False, (0, 20, 0)),
-                         (10, constants.pygameWindowDepth / 2 + 170))
+            self.screen.blit(
+                self.textFont.render('Correct: ' + str((numCorrect / (userdata['numTries'] * 1.0)) * 100.0) + '%',
+                                     False, (0, 20, 0)),
+                (10, constants.pygameWindowDepth / 2 + 170))
 
     def Display_Leaders(self, database, username):
         self.screen.blit(self.headerFont.render('Leaders:', False, (0, 0, 0)),
@@ -124,3 +135,13 @@ class PYGAME_WINDOW:
     def Display_Time_Left(self, time):
         self.screen.blit(self.headerFont.render('Time Left: ' + str(time), False, (0, 0, 0)),
                          (10, constants.pygameWindowDepth / 2 + 190))
+
+    def Display_Gamve_Over(self):
+        self.screen.blit(self.gameOverFont.render('Game Over', False, (0, 0, 0)),
+                         (175, constants.pygameWindowDepth / 4))
+
+    def Display_Level(self, level, health):
+        self.screen.blit(self.headerFont.render('Level: ' + str(level), False, (0, 0, 0)),
+                         (10, 10))
+        self.screen.blit(self.headerFont.render('Health: ' + str(health), False, (0, 0, 0)),
+                         (10, 30))
